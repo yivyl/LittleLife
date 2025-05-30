@@ -1,19 +1,35 @@
-import java.util.Scanner;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
-class Player { //all of the players decision options
+class Player implements Serializable {
     private String name;
+    private int feedCount;
+    private Set<String> foodsFed;
+    private List<String> achievements;
     
-    public Player(String name) { //gets the pets name
+    public Player(String name) {
         this.name = name;
+        this.feedCount = 0;
+        this.foodsFed = new HashSet<>();
+        this.achievements = new ArrayList<>();
     }
+    
     public String getName() {
-        return name; //returns name
+        return name;
     }
+    
     public void feed(Tamagotchi pet, String food) {
         if (pet.isSick()) {
             System.out.println(pet.getName() + " is sick and refuses to eat!");
             return;
         }
+
+        // Track feeding statistics
+        feedCount++;
+        foodsFed.add(food.toLowerCase());
 
         switch (food.toLowerCase()) {
             case "apple":
@@ -45,10 +61,10 @@ class Player { //all of the players decision options
             System.out.println("You fed " + pet.getName() + " some " + food + ".");
         }
     }
+    
     public void giveMedicine(Tamagotchi pet) {
         pet.giveMedicine();
     }
-
 
     public void play(Tamagotchi pet, String activity) {
         if (pet.isSick()) {
@@ -89,14 +105,12 @@ class Player { //all of the players decision options
                 return;
         }
         
-
         // Surprise gift
         if (Math.random() < 0.2) {
             String gift = getRandomGift(pet.getPersonality());
-            System.out.println("🎁 Surprise! " + pet.getName() + " found a gift: " + gift + "!");
+            System.out.println("Surprise! " + pet.getName() + " found a gift: " + gift + "!");
             pet.changeHappiness(10);
         }
-
 
         // Grumpy pets gain extra if you actually please them
         if (pet.getPersonality().equals("grumpy") && baseHappiness > 10) {
@@ -120,36 +134,76 @@ class Player { //all of the players decision options
         }
     }
 
-    public void date(Tamagotchi pet, String dates, String gift){ //player picking date when it's available 
+    public void date(Tamagotchi pet, String dates, String gift) {
         switch (dates.toLowerCase()) {
-            case "movie date": //casual date options 
-            case "coffee date":
-                pet.changeHappiness(5); //+5 happiness
-                pet.changeHealth(05); //+5 health 
-                System.out.println( pet.getName() + " is so cool!");
-                switch (gift.toLowerCase()) {
-                    case "flower": //gift options
-                    case "chocolates":
-                        pet.changeHappiness(5);
-                        System.out.println( pet.getName() + "'s date loved the gift.");
-                        break;
-            case "dinner date": //fancier options
-            case "grab drinks":
-                pet.changeHappiness(10); //+10 happiness 
-                pet.changeHealth(5); //+5 health 
-                System.out.println( pet.getName() + "is lovely <3");
-                switch (gift.toLowerCase()) {
-                    case "flower": //gift options
-                    case "chocolates":
-                        pet.changeHappiness(5);
-                        System.out.println( pet.getName() + "'s date loved the gift.");
-                        break;
-            
+            case "movie":
+            case "coffee":
+                pet.changeHappiness(5);
+                pet.changeHealth(5);
+                System.out.println(pet.getName() + " enjoyed the date!");
+                
+                if (gift.equals("flower") || gift.equals("chocolates")) {
+                    pet.changeHappiness(5);
+                    System.out.println(pet.getName() + "'s date loved the gift.");
+                }
+                break;
+                
+            case "dinner":
+            case "drinks":
+                pet.changeHappiness(10);
+                pet.changeHealth(5);
+                System.out.println(pet.getName() + " had a wonderful time!");
+                
+                if (gift.equals("flower") || gift.equals("chocolates")) {
+                    pet.changeHappiness(5);
+                    System.out.println(pet.getName() + "'s date loved the gift.");
+                }
+                break;
+                
             default:
-                System.out.println("Invalid date choice"); //if you choose anything else 
+                System.out.println("Invalid date choice");
         }
+    }
     
+    // New methods for tracking stats and achievements
+    
+    /**
+     * Get the number of times the pet has been fed
+     */
+    public int getFeedCount() {
+        return feedCount;
     }
+    
+    /**
+     * Get the number of different types of food given
+     */
+    public int getFoodVarietyCount() {
+        return foodsFed.size();
     }
-}
+    
+    /**
+     * Add a new achievement if not already earned
+     * @return true if this is a new achievement
+     */
+    public boolean addAchievement(String achievement) {
+        if (!achievements.contains(achievement)) {
+            achievements.add(achievement);
+            return true;
+        }
+        return false;
+    }
+    
+    /**
+     * Get the number of achievements earned
+     */
+    public int getAchievementCount() {
+        return achievements.size();
+    }
+    
+    /**
+     * Get the list of achievements
+     */
+    public List<String> getAchievements() {
+        return new ArrayList<>(achievements);
+    }
 }

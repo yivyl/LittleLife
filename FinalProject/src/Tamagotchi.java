@@ -61,11 +61,11 @@ class Tamagotchi { //all the info for the pet
         
         isNight = true;
 
-        System.out.println("\n🌙 End of day summary for " + name + ":");
+        System.out.println("\nEnd of day summary for " + name + ":");
         System.out.println(getStatus());
 
         if (happiness >= 70 && health >= 70 && hunger >= 70) {
-            System.out.println(name + " sleeps peacefully 😴");
+            System.out.println(name + " sleeps peacefully");
         } else {
             System.out.println(name + " is restless... Health may decline overnight.");
             changeHealth(-5);
